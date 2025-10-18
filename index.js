@@ -2,11 +2,10 @@ const { Client } = require("discord.js-selfbot-v13");
 const client = new Client();
 const { joinVoiceChannel } = require("@discordjs/voice");
 
-const USER_TOKEN =
-  "";
-const GUILD_ID = "";
-const VOICE_CHANNEL_ID = "";
-const TEXT_CHANNEL_ID = "";
+const USER_TOKEN = process.env.USER_TOKEN;
+  const GUILD_ID = "1425520120540692644";
+const VOICE_CHANNEL_ID = "1429237653286555861";
+const TEXT_CHANNEL_ID = "1004948341769121803";
 
 let afkStartTime = null;
 
@@ -42,7 +41,12 @@ client.on("ready", async () => {
 client.on("voiceStateUpdate", async (oldState, newState) => {
   if (oldState.guild.id !== GUILD_ID || newState.guild.id !== GUILD_ID) return;
 
-  const textChannel = client.channels.cache.get(TEXT_CHANNEL_ID);
+try {
+  const user = await client.users.fetch(TEXT_CHANNEL_ID);
+  user.send(`📢 قام المستخدم بمغادرة الروم الصوتي بعد قضاء **${minutes} دقيقة**.`);
+} catch (err) {
+  console.error("❌ Failed to send message to user:", err);
+}
 
   // المستخدم دخل الغرفة الصوتية
   if (
@@ -74,6 +78,5 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   }
 });
 
-client.login(
-  ""
-);
+require("dotenv").config();
+client.login(process.env.TOKEN);
