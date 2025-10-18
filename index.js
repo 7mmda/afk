@@ -3,7 +3,7 @@ const client = new Client();
 const { joinVoiceChannel } = require("@discordjs/voice");
 
 const USER_TOKEN = process.env.USER_TOKEN;
-  const GUILD_ID = "1425520120540692644";
+const GUILD_ID = "1425520120540692644";
 const VOICE_CHANNEL_ID = "1429237653286555861";
 const TEXT_CHANNEL_ID = "1004948341769121803";
 
@@ -39,14 +39,8 @@ client.on("ready", async () => {
 });
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
+  if (!oldState.guild || !newState.guild) return;
   if (oldState.guild.id !== GUILD_ID || newState.guild.id !== GUILD_ID) return;
-
-try {
-  const user = await client.users.fetch(TEXT_CHANNEL_ID);
-  user.send(`📢 قام المستخدم بمغادرة الروم الصوتي بعد قضاء **${minutes} دقيقة**.`);
-} catch (err) {
-  console.error("❌ Failed to send message to user:", err);
-}
 
   // المستخدم دخل الغرفة الصوتية
   if (
@@ -66,10 +60,14 @@ try {
       const timeSpent = Date.now() - afkStartTime;
       const minutes = Math.floor(timeSpent / 60000);
 
-      if (textChannel) {
-        textChannel.send(
+      // إرسال الرسالة مباشرة للحساب
+      try {
+        const user = await client.users.fetch(TEXT_CHANNEL_ID);
+        user.send(
           `📢 قام المستخدم بمغادرة الروم الصوتي بعد قضاء **${minutes} دقيقة**.`
         );
+      } catch (err) {
+        console.error("❌ Failed to send message to user:", err);
       }
 
       console.log(`✅ User left the voice channel after ${minutes} minutes.`);
